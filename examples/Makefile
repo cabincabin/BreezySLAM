@@ -28,7 +28,7 @@ DATASET = exp2
 USE_ODOMETRY = 0
 RANDOM_SEED  = 9999
 
-all: log2pgm Log2PGM.class
+all: log2pgm #Log2PGM.class
 
 pltmovie:
 	./logdemoplt.py exp1 1 9999
@@ -45,10 +45,10 @@ cpptest: log2pgm
 	./log2pgm $(DATASET) $(USE_ODOMETRY) $(RANDOM_SEED)
 	$(VIEWER) $(DATASET).pgm
 
-javatest: Log2PGM.class
-	java -classpath ../java:. -Djava.library.path=$(JAVADIR)/algorithms:$(JAVADIR)/components Log2PGM \
-	$(DATASET) $(USE_ODOMETRY) $(RANDOM_SEED)
-	$(VIEWER) $(DATASET).pgm
+#javatest: Log2PGM.class
+#	java -classpath ../java:. -Djava.library.path=$(JAVADIR)/algorithms:$(JAVADIR)/components Log2PGM \
+#	$(DATASET) $(USE_ODOMETRY) $(RANDOM_SEED)
+#	$(VIEWER) $(DATASET).pgm
 
 log2pgm: log2pgm.o 
 	g++ -O3 -o log2pgm log2pgm.o -L$(LIBDIR) -lbreezyslam
@@ -56,8 +56,8 @@ log2pgm: log2pgm.o
 log2pgm.o: log2pgm.cpp 
 	g++ -O3 -c -I ../cpp log2pgm.cpp
 
-Log2PGM.class: Log2PGM.java
-	javac -classpath ../java Log2PGM.java
+#Log2PGM.class: Log2PGM.java
+#	javac -classpath ../java Log2PGM.java
 
 $(DATASET).pgm:
 	./log2pgm.py $(DATASET) $(USE_ODOMETRY) $(RANDOM_SEED)

@@ -62,7 +62,7 @@ CoreSLAM::CoreSLAM(
     this->hole_width_mm = DEFAULT_HOLE_WIDTH_MM;   
     
     // Store laser for later
-    this->laser = new Laser(laser);
+    this->laser = &laser;
     
     // Initialize poseChange (dxyMillimeters, dthetaDegrees, dtSeconds) for odometry
     this->poseChange = new PoseChange();
@@ -97,7 +97,17 @@ void CoreSLAM::update(int * scan_mm, PoseChange & poseChange)
                              
     // Implementing class updates map and pointcloud
     this->updateMapAndPointcloud(poseChange);
-}   
+}
+
+void CoreSLAM::update(int * scan_mm, Position & nPosition)
+{
+    // Build a scan for computing distance to map, and one for updating map
+    this->scan_update(this->scan_for_mapbuild, scan_mm);
+    this->scan_update(this->scan_for_distance, scan_mm);
+
+    // Implementing class updates map and pointcloud
+    this->updateMapAndPointcloud(nPosition);
+}
 
 void CoreSLAM::update(int * scan_mm) 
 {
@@ -157,6 +167,38 @@ void SinglePositionSLAM::updateMapAndPointcloud(PoseChange & poseChange)
     this->position = Position(new_position);
     this->position.x_mm -= this->laser->offset_mm * this->costheta();
     this->position.y_mm -= this->laser->offset_mm * this->sintheta(); 
+}
+
+void SinglePositionSLAM::updateMapAndPointcloud(Position & nPosition)
+{
+    // Start at current position
+    Position start_pos = this->position;
+
+    // Add effect of poseChange
+    start_pos.x_mm      = nPosition.x_mm;
+    start_pos.y_mm      = nPosition.y_mm;
+    if(nPosition.theta_degrees>180){
+        start_pos.theta_degrees = nPosition.theta_degrees - 180;
+    }
+    else{
+       start_pos.theta_degrees = nPosition.theta_degrees + 180;
+    }
+
+
+    // Add offset from laser
+    //start_pos.x_mm += this->laser->offset_mm * this->costheta();
+    //start_pos.y_mm += this->laser->offset_mm * this->sintheta();
+
+    // Get new position from implementing class
+    Position new_position = this->getNewPosition(start_pos);
+
+    // Update the map with this new position
+    this->map->update(*this->scan_for_mapbuild, new_position, this->map_quality, this->hole_width_mm);
+
+    // Update the current position with this new position, adjusted by laser offset
+    this->position = Position(new_position);
+    //this->position.x_mm -= this->laser->offset_mm * this->costheta();
+    //this->position.y_mm -= this->laser->offset_mm * this->sintheta();
 }
     
 Position & SinglePositionSLAM::getpos(void)

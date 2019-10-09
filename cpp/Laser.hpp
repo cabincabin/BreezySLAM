@@ -44,9 +44,9 @@ protected:
     double distance_no_detection_mm;    /* default value when the laser returns 0 */
     int detection_margin;               /* first scan element to consider */
     double offset_mm;                   /* position of the laser wrt center of rotation */
-    
+
 public:
-    
+
     /**
     * Builds a Laser object from parameters based on the specifications for your 
     * Lidar unit.
@@ -119,7 +119,7 @@ public:
     * 
     */
     URG04LX(int detection_margin = 0, float offset_mm = 0) : 
-    Laser(682, 10, 240, 4000, detection_margin, offset_mm) { }
+    Laser(682, 10, 69.4, 1000, detection_margin, offset_mm) { }
     
     /**
     * Builds an empty URG04LX object (all parameters zero).

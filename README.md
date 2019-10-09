@@ -1,3 +1,17 @@
+
+
+
+Examples::
+
+for i in 10/**/**/*.dat; do ./log2pgm $i 1 10; done
+
+first value is file name (full dat path)
+generates new folder (lidardat.datimages)
+and new pgm file for each scan update
+
+second is 1, stating to use truth odometry only
+third is full truth size of the entire map
+
 BreezySLAM
 ==========
 

@@ -81,6 +81,7 @@ public:
     * @param poseChange poseChange for odometry
     */
     void update(int * scan_mm, PoseChange & poseChange);
+    void update(int * scan_mm, Position  & nPosition);
 
 
     /**
@@ -148,6 +149,7 @@ protected:
     * @param poseChange poseChange for odometry
     */
     virtual void updateMapAndPointcloud(PoseChange & poseChange) = 0;
+    virtual void updateMapAndPointcloud(Position & nPosition) = 0;
 
 private:
             
@@ -194,6 +196,8 @@ protected:
     * @param poseChange poseChange for odometry
     */
     void updateMapAndPointcloud(PoseChange & poseChange);
+
+    void updateMapAndPointcloud(Position & nPosition);
     
     /**
     * Returns a new position based on searching from a starting position. Called automatically by
